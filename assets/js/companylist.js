@@ -6,8 +6,11 @@ function getCompanies() {
         .then(res => res.json())
         .then(dataList => {
             companiesArrayList = dataList;
-            return dataList; // Return the data for further use
+            return dataList; 
         });
+}
+function goToJobs(id) {
+    window.location.href = `../html/joblist.html?id=${id}`;
 }
 function loadCompanies() {
     let comapaniesList = document.getElementById("companiesList");
@@ -29,7 +32,7 @@ function loadCompanies() {
                                  <p class="card-text">Location : ${element.location}</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
-                                       <button type="button" class="btn btn-warning show-more" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="loadModalData(${index})">View Jobs</button>
+                                       <button type="button" class="btn btn-warning show-more" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="goToJobs(${index})">View Jobs</button>
                                         <button type="button" class="btn btn-warning show-more" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="loadModalData(${index})">Details</button>
                                        <button type="button" class="btn btn-warning show-more" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="loadModalEditData(${index})">Edit</button>
                                    
@@ -114,7 +117,8 @@ function deleteCompany(id){
     .then(res => console.log(res))}
 }
 function saveCompany(id) {
-        const newPost = {
+      {
+ const newPost = {
         companyId: id,
         name: document.getElementById("editName").value,
         location: document.getElementById("editLocation").value,
@@ -122,12 +126,14 @@ function saveCompany(id) {
         description: document.getElementById("editDescription").value
         }
          fetch("http://localhost:8080/company", {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json; charset=utf-8'
         },
         body: JSON.stringify(newPost)
+        
          })
+      } 
           location.reload(); 
 }
 
