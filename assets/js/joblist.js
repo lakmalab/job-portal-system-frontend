@@ -1,5 +1,5 @@
 let jobArrayList = [];
-
+let companiesArrayList = [];
 
 function getCompanies() {
     return fetch("http://localhost:8080/company")
@@ -42,7 +42,9 @@ function loadJobs() {
              Promise.all([getJobs(), getCompanies()]).then(([dataList, companiesList]) => {
             jobArrayList = dataList;
             loadModalData();
-            dataList.forEach((element, index) => {
+            dataList.forEach((element) => {
+            const company = companiesList.find(c => c.companyId == element.companyId);
+
                 body += `
     <div data-aos="fade-up" data-aos-duration="3000">
      <a href="../html/single.html?id=${element.jobId}" class="text-decoration-none text-dark">
@@ -51,7 +53,7 @@ function loadJobs() {
                 <img src="../img/portfolio-1.jpg" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
                 <div class="ms-3">
                     <h5 style="color:rgb(52, 56, 69);">${element.title}</h5>
-                    <h6 class="text-danger">${companiesList[parseInt(element.companyId)].name}</h6> <small class="text-success">Salary: ${element.salary}</small>
+                    <h6 class="text-danger">${company ? company.name : "Unknown Company"}</h6> <small class="text-success">Salary: ${element.salary}</small>
                     <p class="text-muted">Salary Date: ${element.salary_date || "N/A"}</p>
                     
                 </div>
@@ -165,38 +167,32 @@ function search() {
                 console.log(dataList);
                 jobArrayList = dataList;
                 
-               dataList.forEach((element, index) => {
-                const name = element.title.toLowerCase();
-                const industry = companiesList[parseInt(element.companyId)].name;
-                const location = element.description.toLowerCase();
+            dataList.forEach((element) => {
+            const company = companiesList.find(c => c.companyId == element.companyId);
+            const titleMatch = element.title.toLowerCase().includes(searchTxt);
+            const companyMatch = company?.name?.toLowerCase().includes(searchTxt);
+            const locationMatch = element.description?.toLowerCase().includes(searchTxt);
 
-                if (
-                    searchTxt === "" ||
-                    name.includes(searchTxt) ||
-                    industry.includes(searchTxt) ||
-                    location.includes(searchTxt)
-                    
-                ) {
-                    body += `
+            if (searchTxt === "" || titleMatch || companyMatch || locationMatch) {
+                body += `
                 <div data-aos="fade-up" data-aos-duration="3000">
-        <div class="card shadow-sm" style="border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 1rem;">
-            <div class="d-flex p-3 align-items-center">
-                <img src="../img/portfolio-1.jpg" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
-                <div class="ms-3">
-                    <h5>${element.title}</h5>
-                    <h6 class="text-warning">${companiesList[parseInt(element.companyId)].name}</h6> <small class="text-success">Salary: ${element.salary}</small>
-                    <p class="text-muted">Salary Date: ${element.salary_date || "N/A"}</p>
+                    <div class="card shadow-sm" style="border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 1rem;">
+                        <div class="d-flex p-3 align-items-center">
+                            <img src="../img/portfolio-1.jpg" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
+                            <div class="ms-3">
+                                <h5>${element.title}</h5>
+                                <h6 class="text-warning">${company ? company.name : "Unknown Company"}</h6>
+                                <small class="text-success">Salary: ${element.salary}</small>
+                                <p class="text-muted">Salary Date: ${element.salary_date || "N/A"}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-               
-            </div>
-           
-        </div>
-    </div>
-                    `;
-                }
-            });
+                `;
+            }
+        });
 
-            JobsList.innerHTML = body;
+        JobsList.innerHTML = body;
         })
         .catch(error => {
             console.error("Error fetching company data:", error);
@@ -204,18 +200,7 @@ function search() {
         });
 }
 
-function loadPage() {
-    const params = new URLSearchParams(window.location.search);
-    const id = parseInt(params.get("id"), 10);
-    console.log(id);
-    
-    if (id == 0 || id > 0) {
-        filter(id);
-        
-    } else {
-       loadJobs();
-    }
-}
+
 function filter(companyId = null) {
     let JobsList = document.getElementById("JobsList");
     let body = "";
@@ -224,9 +209,7 @@ function filter(companyId = null) {
         jobArrayList = dataList;
 
         dataList.forEach((element) => {
-            const name = element.title.toLowerCase();
-            const industry = companiesList[parseInt(element.companyId)].name.toLowerCase();
-            const location = element.description.toLowerCase();
+            const company = companiesList.find(c => c.companyId == element.companyId);
 
             if (companyId === null || element.companyId === companyId) {
                 body += `
@@ -236,7 +219,7 @@ function filter(companyId = null) {
                             <img src="../img/portfolio-1.jpg" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
                             <div class="ms-3">
                                 <h5>${element.title}</h5>
-                                <h6 class="text-warning">${industry}</h6>
+                                <h6 class="text-warning">${company ? company.name : "Unknown Company"}</h6>
                                 <small class="text-success">Salary: ${element.salary}</small>
                                 <p class="text-muted">Salary Date: ${element.salary_date || "N/A"}</p>
                             </div>
@@ -252,6 +235,19 @@ function filter(companyId = null) {
         console.error("Error fetching job data:", error);
         JobsList.innerHTML = "<p class='text-danger'>Failed to load Jobs. Please try again later.</p>";
     });
+}
+
+function loadPage() {
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"), 10);
+    console.log(id);
+    
+    if (id == 0 || id > 0) {
+        filter(id);
+        
+    } else {
+       loadJobs();
+    }
 }
 loadPage()
 

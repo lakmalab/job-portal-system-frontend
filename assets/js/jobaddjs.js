@@ -38,7 +38,7 @@ function addCompany() {
         salary_date: submitData(),
         salary: document.getElementById("salary").value,
         description: document.getElementById("descrtiption").value,
-        companyId: document.getElementById("Companyselect").value
+        companyId: parseInt(document.getElementById("Companyselect").value,10)
         }
          fetch("http://localhost:8080/job", {
         method: 'POST',
