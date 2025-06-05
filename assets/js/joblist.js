@@ -45,18 +45,21 @@ function loadJobs() {
             dataList.forEach((element, index) => {
                 body += `
     <div data-aos="fade-up" data-aos-duration="3000">
-        <div class="card shadow-sm" style="border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 1rem;">
+     <a href="../html/single.html?id=${element.jobId}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm  clickable-card" style="border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 1rem;">
             <div class="d-flex p-3 align-items-center">
                 <img src="../img/portfolio-1.jpg" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
                 <div class="ms-3">
-                    <h5>${element.title}</h5>
-                    <h6 class="text-warning">${companiesList[parseInt(element.companyId)].name}</h6> <small class="text-success">Salary: ${element.salary}</small>
+                    <h5 style="color:rgb(52, 56, 69);">${element.title}</h5>
+                    <h6 class="text-danger">${companiesList[parseInt(element.companyId)].name}</h6> <small class="text-success">Salary: ${element.salary}</small>
                     <p class="text-muted">Salary Date: ${element.salary_date || "N/A"}</p>
+                    
                 </div>
                
             </div>
-           
+          
         </div>
+      </a>  
     </div>
 
             `

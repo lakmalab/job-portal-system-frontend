@@ -108,6 +108,18 @@ body{
     box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
 }
 
+  .clickable-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .clickable-card:hover {
+    background-color: #fad962;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+
+
 .card {
     position: relative;
     display: flex;
